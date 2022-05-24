@@ -270,7 +270,7 @@ server.port=8080
 
 ![image-20220524144639071](wiki知识库.assets/image-20220524144639071.png)
 
-### 3.2 修改启动图案
+### 3.3 修改启动图案
 
 自定义图案，在resources目录中新增banner.txt文件。
 
@@ -309,7 +309,70 @@ server.port=8080
 
 
 
+## 4. 开发Hello World接口
 
+1.  创建 `cn.ll.controller`包
+2.  在 `cn.ll.controller`包下创建TestController类
+
+```java
+package cn.ll.controller;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * @author liuli
+ */
+//@Controller
+@RestController
+public class TestController {
+
+//  @RequestMapping("/hello")
+    @GetMapping("/hello")
+    public String hello(){
+        return "Hello World!";
+    }
+
+}
+
+```
+
+运行启动类WikiApplication.java在浏览器输入localhost:8080/hello即可访问接口：
+
+![image-20220325090647843](wiki知识库.assets/image-20220325090647843.png)
+
+
+
+- @RestController注解用于声明返回文本数据，可以返回字符串或者JSON
+- @Controller注解用于声明返回的界面（前后端分离项目基本用不到）
+- @Controller + @ResponseBody = @RestController
+
+Controller层是用于定义接口的，是请求的入口。
+
+常见的HTTP请求：GET POST PUT DELETE
+
+GET：查询
+
+POST：新增
+
+PUT：修改
+
+DELETE：删除
+
+对应的注解：
+
+- @GetMapping
+- @PostMapping
+- @PutMapping
+- @DeleteMapping
+
+如果使用@RequestMapping注解，则表示这个接口支持所有的请求方式。
+
+@GetMapping("/hello")
+
+等价于
+
+@RequestMapping(value="/hello", Method=RequestMethod.GET)
 
 
 
