@@ -253,13 +253,22 @@
 /log/
 ```
 
+### 3.2 修改启动文案
 
+在启动类WikiApplication中添加启动成功日志：
 
+![image-20220524134740712](wiki知识库.assets/image-20220524134740712.png)
 
+在application.properties中添加一下代码：
 
+```properties
+# SpringBoot启动端口
+server.port=8080
+```
 
+这样项目在启动的时候就会弹出启动成功显示端口号：
 
-
+![image-20220524144639071](wiki知识库.assets/image-20220524144639071.png)
 
 
 
