@@ -463,7 +463,78 @@ name=TEST
 
 ![image-20220524152502288](wiki知识库.assets/image-20220524152502288.png)
 
+## 7. SpringBoot配置文件
 
+SpringBoot会自动识别下面这组配置文件：
+application.properties/yml
+config/application.properties/yml
+
+如果是SpringCloud，还会自动识别下面这组配置文件：
+bootstrap.properties/yml
+config/bootstrap.properties/yml
+
+
+
+配置文件优先级：
+
+yml文件>properties
+
+config目录下配置优先于其父目录。
+
+
+
+自定义配置项：
+
+在配置文件中定义：
+
+```
+test.hello = hello
+```
+
+在要读取的地方加上@Value注解即可读取。
+
+```java
+package cn.ll.controller;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * @author liuli
+ */
+//@Controller
+@RestController
+public class TestController {
+
+    @Value("${test.hello}")
+    private String testHello;
+
+//  @RequestMapping("/hello")
+    @GetMapping("/hello")
+    public String hello(){
+        return "Hello World!" + testHello;
+    }
+
+    @PostMapping("/hello/post")
+    public String helloPost(String name) {
+        return "Hello World! Post，" + name;
+    }
+
+}
+
+```
+
+@Value支持默认值写法：
+
+```
+    @Value("${test.hello:test}")
+
+```
+
+如果配置文件中没有定义配置项，则显示默认值test，如果存在自定义配置项，则为配置项中的内容。
 
 
 
