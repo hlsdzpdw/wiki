@@ -374,7 +374,46 @@ DELETE：删除
 
 @RequestMapping(value="/hello", Method=RequestMethod.GET)
 
+## 5. 更改启动类位置
 
+1. 创建 `cn.ll.config` 包
+
+2. 将LiuWikiApplication.java移动到该包下。
+
+3. 添加@ComponentScan注解标注路径。以下是启动类：
+
+   ```java
+   package cn.ll.config;
+   
+   import org.slf4j.Logger;
+   import org.slf4j.LoggerFactory;
+   import org.springframework.boot.SpringApplication;
+   import org.springframework.boot.autoconfigure.SpringBootApplication;
+   import org.springframework.context.annotation.ComponentScan;
+   import org.springframework.core.env.Environment;
+   
+   @ComponentScan("cn.ll")
+   @SpringBootApplication
+   public class LiuWikiApplication {
+   
+       private static final Logger LOG = LoggerFactory.getLogger(LiuWikiApplication.class);
+   
+       public static void main(String[] args) {
+           SpringApplication app = new SpringApplication(LiuWikiApplication.class);
+           Environment env = app.run(args).getEnvironment();
+           LOG.info("启动成功！！");
+           LOG.info("地址: \thttp://127.0.0.1:{}", env.getProperty("server.port"));
+       }
+   
+   }
+   
+   ```
+
+   
+
+@SpringBootApplication注解包含@ComponentScan注解，而@ComponentScan注解只会扫描当前类下的包以及子包，扫描不到Controller层，所以更改启动类的位置需要重新填写需要扫描的路径。
+
+需要注意的是，扫描的路径不要太通用，例如要扫描com.xx而不是com，如果单纯扫描com，会把第三方jar里的类扫描出来。
 
 
 
