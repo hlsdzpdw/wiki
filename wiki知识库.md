@@ -415,11 +415,53 @@ DELETE：删除
 
 需要注意的是，扫描的路径不要太通用，例如要扫描com.xx而不是com，如果单纯扫描com，会把第三方jar里的类扫描出来。
 
+## 6. 使用IDEA自带的HTTP Client测试接口
+
+1. 创建 `http` 包
+2. 新建一个File，名称可以随意，后缀必须为http,例如：test.http。
+
+以下是实例：
+
+test.http
+
+```
+GET http://localhost:8080/hello
+Accept: application/json
 
 
+###
+```
 
+控制台会输出返回到的Hello World！
 
+![image-20220524151756133](wiki知识库.assets/image-20220524151756133.png)
 
+HTTP Client支持结果验证：
+
+```
+GET http://localhost:8080/hello
+#Accept: application/json
+
+> {%
+client.test("test-hello", function() {
+  client.log("测试/hello接口");
+  client.log(response.body);
+  client.log(JSON.stringify(response.body)); // 虽然idea没有提示JSON，但是可以用
+  client.assert(response.status === 200, "返回码不是200");
+  client.assert(response.body === "Hello World", "结果验证失败");
+});
+%}
+###
+
+POST http://localhost:8080/hello/post
+Content-Type: application/x-www-form-urlencoded
+
+name=TEST
+
+###
+```
+
+![image-20220524152502288](wiki知识库.assets/image-20220524152502288.png)
 
 
 
