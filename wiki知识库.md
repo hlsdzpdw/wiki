@@ -536,5 +536,21 @@ public class TestController {
 
 如果配置文件中没有定义配置项，则显示默认值test，如果存在自定义配置项，则为配置项中的内容。
 
+## 8. SpringBoot集成热部署
 
+1. 引入依赖包，在pom.xml文件中添加：
 
+   ```xml
+    <dependency>
+               <groupId>org.springframework.boot</groupId>
+               <artifactId>spring-boot-devtools</artifactId>
+           </dependency>
+   ```
+
+   SpringBoot内置的依赖不需要添加版本号
+
+2. 开启静态自动编译，打开右上角File->Settings，找到Compiler，勾选上 `Build project automatically` :![image-20220325222645992](C:\Users\liu\AppData\Roaming\Typora\typora-user-images\image-20220325222645992.png)
+
+3. 开启自动编译，开启静态自动编译，打开右上角File->Settings，找到 Advanced Settings，勾选Allow auto-make to start even if developed application is currently running
+
+![image-20220524180235798](wiki知识库.assets/image-20220524180235798.png)
