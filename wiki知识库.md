@@ -636,15 +636,17 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 
 
-### 3. Mybatis示例
+### 2.3. Mybatis示例
 
-#### 3.1 1. 新建 `domain` 包，创建 `Test` 实体类
+#### 2.3.1 创建实体类
+
+在`cn.ll`目录下新建 `domain` 包，创建 `Test` 实体类
 
 ```java
 package cn.ll.domain;
 
 /**
- * @author liuli
+ * @author liu
  */
 public class Test {
 
@@ -680,3 +682,129 @@ public class Test {
 }
 
 ```
+
+#### 2.3.2 新建mapper包
+
+在`cn.ll`目录下新建`mapper`包，创建`TestMapper`接口，在启动类中添加注解
+
+`TestMapper.java`：
+
+```java
+package cn.ll.mapper;
+
+import cn.ll.domain.Test;
+
+import java.util.List;
+
+public interface TestMapper {
+    public List<Test> list();
+}
+
+```
+
+在启动类中添加`@MapperScan`注解：
+
+```java
+@MapperScan("cn.ll.mapper")
+
+```
+
+`@MapperScan`作用：指定要变成实现类的接口所在的包，然后包下面的所有接口在编译之后都会生成相应的实现类。
+
+
+
+#### 2.3.3 mapper映射文件
+
+在`resources`目录下新建`mapper`目录，新建`TestMapper.xml`:
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.ll.mapper.TestMapper">
+
+    <select id="list" resultType="cn.ll.domain.Test">
+        select
+            `id`, `name`, `password`
+        from
+            `test`
+    </select>
+
+
+</mapper>
+
+```
+
+在`application.properties`中配置`mybatis`所有`Mapper.xml`所在路径：
+
+```properties
+# 配置mybatis所有Mapper.xml所在的路径
+mybatis.mapper-locations=classpath:/mapper/**/*.xml
+```
+
+`mybatis.mapper-locations`在`SpringBoot`配置文件中使用，作用是扫描`Mapper`接口对应的xml文件。
+
+#### 2.3.4 新建service层
+
+在`cn.ll`目录下新建`service`包，在`service`包下新建`TestService.java`:
+
+```java
+package cn.ll.service;
+
+import cn.ll.domain.Test;
+import cn.ll.mapper.TestMapper;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+@Service
+public class TestService {
+
+    //  @Autowired
+    @Resource
+    private TestMapper testMapper;
+
+    public List<Test> list(){
+        return testMapper.list();
+    }
+
+}
+```
+
+这里可以使用@Autowired也可以使用@Resource。
+
+@Autowired是spring注解，@Resource是jdk注解，推荐@Resource。
+
+#### 2.3.5 在controller层中新增get请求
+
+在TestController.java中注入testService并添加list方法：
+
+```java
+@Resource
+    private TestService testService;
+
+
+
+@GetMapping("/test/list")
+    public List<Test> list(){
+        return testService.list();
+    }
+```
+
+#### 2.3.6 在数据库中添加数据
+
+```sql
+insert into `test` (id, name, password) VALUES (1, '测试', 'password');
+```
+
+#### 2.3.7 使用测试脚本测试
+
+```http
+GET http://localhost:8080/test/list
+
+```
+
+运行结果：
+
+![image-20220525152736322](wiki知识库.assets/image-20220525152736322.png)
