@@ -52,7 +52,7 @@
 
 ### 1.4. 修改Spring Boot版本号
 
-打开pom.xml文件进行修改：
+打开`pom.xml`文件进行修改：
 
 ```xml
 <parent>
@@ -70,7 +70,7 @@
 
 ### 2.1 编码配置
 
-在IDEA左上角点击File -> settings，找到File Encodings，把所有可以更改UTF-8的地方全部改为UTF-8。
+在IDEA左上角点击`File -> settings`，找到`File Encodings`，把所有可以更改`UTF-8`的地方全部改为`UTF-8`。
 
 ![image-20220523120724047](wiki知识库.assets/image-20220523120724047.png)
 
@@ -78,7 +78,7 @@
 
 ### 2.2 JDK配置
 
-打开File -> Project Structure
+打开`File -> Project Structure`
 
 ![image-20220523120855280](wiki知识库.assets/image-20220523120855280.png)
 
@@ -88,13 +88,13 @@
 
 #### 2.3.1 创建repository
 
-在Maven目录中创建repository文件夹，该文件夹用来存放Maven下载的库文件。
+在`Maven`目录中创建`repository`文件夹，该文件夹用来存放`Maven`下载的库文件。
 
 #### 2.3.2 修改配置
 
-打开config/settings.xml文件
+打开`config/settings.xml`文件
 
-- 修改第55行的标签内容，为本地电脑repository文件夹的路径：
+- 修改第55行的标签内容，为本地电脑`repository`文件夹的路径：
 
 ```xml
 <localRepository>G:\maven\repository</localRepository>
@@ -127,7 +127,7 @@
 
 #### 2.3.3 在IDEA中修改配置
 
-启动IDEA，打开Settings找到Maven，将选项和你本地的目录一一对应：
+启动IDEA，打开`Settings`找到`Maven`，将选项和你本地的目录一一对应：
 
 ![image-20220523123720202](wiki知识库.assets/image-20220523123720202.png)
 
@@ -135,7 +135,7 @@
 
 ### 2.4 git配置
 
-顶部工具栏找到VCS->Enable Version Control Intergration 然后选择git
+顶部工具栏找到`VCS->Enable Version Control Intergration` 然后选择git
 
 ![image-20220523144157492](wiki知识库.assets/image-20220523144157492.png)
 
@@ -149,17 +149,17 @@
 
 
 
-在IDEA左下角选择Commit，这时候发现有文件没有交给git进行管理：
+在IDEA左下角选择`Commit`，这时候发现有文件没有交给git进行管理：
 
 ![image-20220523152310521](wiki知识库.assets/image-20220523152310521.png)
 
-这时候我们可以右键选择Add to VCS：
+这时候我们可以右键选择`Add to VCS`：
 
 ![image-20220523152333919](wiki知识库.assets/image-20220523152333919.png)
 
 这样文件就会交给git进行管理了，文件也会变成绿色。
 
-我们可以选中所有文件，在下方Commit Message填写想要提交的信息单击Commit就可以进行提交了。
+我们可以选中所有文件，在下方`Commit Message`填写想要提交的信息单击`Commit`就可以进行提交了。
 
 ![image-20220523152413138](wiki知识库.assets/image-20220523152413138.png)
 
@@ -167,19 +167,19 @@
 
 ### 2.5 使用IDEA连接Github
 
-在IDEA打开File->Settings，找到Github：
+在IDEA打开`File->Settings`，找到Github：
 
 ![image-20220523152734314](wiki知识库.assets/image-20220523152734314.png)
 
-单击+，选择log in via github在浏览器中点击即可。
+单击+，选择`log in via github`在浏览器中点击即可。
 
 
 
-点击顶部Git -> Github -> Share project on Github![image-20220523160051897](wiki知识库.assets/image-20220523160051897.png)
+点击顶部`Git -> Github -> Share project on Github`![image-20220523160051897](wiki知识库.assets/image-20220523160051897.png)
 
 
 
-点击share即可在github创建同名远程库。
+点击`share`即可在github创建同名远程库。
 
 在IDEA中Ctrl+Shift+k即可调出push界面，点击push可以将本地仓库的代码上传到远程仓库。
 
@@ -187,7 +187,7 @@
 
 ### 3.1 logback日志样式修改
 
-在resources目录下增加logback-spring.xml文件：
+在`resources`目录下增加`logback-spring.xml`文件：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -247,7 +247,7 @@
 </configuration>
 ```
 
-在.gitignore文件中把log目录添加，以避免日志文件上传远程仓库：
+在`.gitignore`文件中把`log`目录添加，以避免日志文件上传远程仓库：
 
 ```
 /log/
@@ -255,11 +255,11 @@
 
 ### 3.2 修改启动文案
 
-在启动类WikiApplication中添加启动成功日志：
+在启动类`WikiApplication`中添加启动成功日志：
 
 ![image-20220524134740712](wiki知识库.assets/image-20220524134740712.png)
 
-在application.properties中添加一下代码：
+在`application.properties`中添加一下代码：
 
 ```properties
 # SpringBoot启动端口
@@ -272,7 +272,7 @@ server.port=8080
 
 ### 3.3 修改启动图案
 
-自定义图案，在resources目录中新增banner.txt文件。
+自定义图案，在`resources`目录中新增`banner.txt`文件。
 
 在线生成文字图案：http://patorjk.com/software/taag
 
@@ -312,7 +312,7 @@ server.port=8080
 ## 4. 开发Hello World接口
 
 1.  创建 `cn.ll.controller`包
-2.  在 `cn.ll.controller`包下创建TestController类
+2.  在 `cn.ll.controller`包下创建`TestController`类
 
 ```java
 package cn.ll.controller;
@@ -337,7 +337,7 @@ public class TestController {
 
 ```
 
-运行启动类WikiApplication.java在浏览器输入localhost:8080/hello即可访问接口：
+运行启动类`WikiApplication.java`在浏览器输入localhost:8080/hello即可访问接口：
 
 ![image-20220325090647843](wiki知识库.assets/image-20220325090647843.png)
 
@@ -378,9 +378,9 @@ DELETE：删除
 
 1. 创建 `cn.ll.config` 包
 
-2. 将LiuWikiApplication.java移动到该包下。
+2. 将`LiuWikiApplication.java`移动到该包下。
 
-3. 添加@ComponentScan注解标注路径。以下是启动类：
+3. 添加`@ComponentScan`注解标注路径。以下是启动类：
 
    ```java
    package cn.ll.config;
@@ -411,14 +411,14 @@ DELETE：删除
 
    
 
-@SpringBootApplication注解包含@ComponentScan注解，而@ComponentScan注解只会扫描当前类下的包以及子包，扫描不到Controller层，所以更改启动类的位置需要重新填写需要扫描的路径。
+`@SpringBootApplication`注解包含`@ComponentScan`注解，而`@ComponentScan`注解只会扫描当前类下的包以及子包，扫描不到Controller层，所以更改启动类的位置需要重新填写需要扫描的路径。
 
-需要注意的是，扫描的路径不要太通用，例如要扫描com.xx而不是com，如果单纯扫描com，会把第三方jar里的类扫描出来。
+需要注意的是，扫描的路径不要太通用，例如要扫描`com.xx`而不是`com`，如果单纯扫描`com`，会把第三方`jar`里的类扫描出来。
 
 ## 6. 使用IDEA自带的HTTP Client测试接口
 
 1. 创建 `http` 包
-2. 新建一个File，名称可以随意，后缀必须为http,例如：test.http。
+2. 新建一个`File`，名称可以随意，后缀必须为`http`，例如：test.http。
 
 以下是实例：
 
@@ -436,7 +436,7 @@ Accept: application/json
 
 ![image-20220524151756133](wiki知识库.assets/image-20220524151756133.png)
 
-HTTP Client支持结果验证：
+`HTTP Client`支持结果验证：
 
 ```
 GET http://localhost:8080/hello
@@ -465,11 +465,11 @@ name=TEST
 
 ## 7. SpringBoot配置文件
 
-SpringBoot会自动识别下面这组配置文件：
+`SpringBoot`会自动识别下面这组配置文件：
 application.properties/yml
 config/application.properties/yml
 
-如果是SpringCloud，还会自动识别下面这组配置文件：
+如果是`SpringCloud`，还会自动识别下面这组配置文件：
 bootstrap.properties/yml
 config/bootstrap.properties/yml
 
@@ -491,7 +491,7 @@ config目录下配置优先于其父目录。
 test.hello = hello
 ```
 
-在要读取的地方加上@Value注解即可读取。
+在要读取的地方加上`@Value`注解即可读取。
 
 ```java
 package cn.ll.controller;
@@ -527,7 +527,7 @@ public class TestController {
 
 ```
 
-@Value支持默认值写法：
+`@Value`支持默认值写法：
 
 ```
     @Value("${test.hello:test}")
@@ -538,7 +538,7 @@ public class TestController {
 
 ## 8. SpringBoot集成热部署
 
-1. 引入依赖包，在pom.xml文件中添加：
+1. 引入依赖包，在`pom.xml`文件中添加：
 
    ```xml
     <dependency>
@@ -549,17 +549,17 @@ public class TestController {
 
    SpringBoot内置的依赖不需要添加版本号
 
-2. 开启静态自动编译，打开右上角File->Settings，找到Compiler，勾选上 `Build project automatically` :![image-20220325222645992](C:\Users\liu\AppData\Roaming\Typora\typora-user-images\image-20220325222645992.png)
+2. 开启静态自动编译，打开右上角`File->Settings`，找到`Compiler`，勾选上 `Build project automatically` :![image-20220325222645992](C:\Users\liu\AppData\Roaming\Typora\typora-user-images\image-20220325222645992.png)
 
-3. 开启自动编译，开启静态自动编译，打开右上角File->Settings，找到 Advanced Settings，勾选Allow auto-make to start even if developed application is currently running
+3. 开启自动编译，开启静态自动编译，打开右上角`File->Settings`，找到 `Advanced Settings`，勾选`Allow auto-make to start even if developed application is currently running`
 
 ![image-20220524180235798](wiki知识库.assets/image-20220524180235798.png)
 
 # 后端架构完善与接口开发
 
-## 1. IDEA数据库插件pei'zhi
+## 1. IDEA数据库插件配置
 
-右侧栏找到Database，点击加号，选择Data Source->Mysql:
+右侧栏找到`Database`，点击加号，选择`Data Source->Mysql`:
 
 ![image-20220525113440875](wiki知识库.assets/image-20220525113440875.png)
 
@@ -567,7 +567,7 @@ public class TestController {
 
 ![image-20220525113528398](wiki知识库.assets/image-20220525113528398.png)
 
-随后点击Test Connection，第一次需要下载相关驱动。
+随后点击`Test Connection`，第一次需要下载相关驱动。
 
 测试连接成功后点击ok即可。
 
@@ -601,3 +601,82 @@ create table `test` (
 
 以后需要修改数据库信息可以在这里面填写sql语句执行，不需要切屏到数据库操作软件，很方便。
 
+## 2. 集成持久层框架Mybatis
+
+### 2.1 添加依赖
+
+在`pom.xml`中添加依赖：
+
+```xml
+   <!-- 集成mybatis-->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>2.1.3</version>
+        </dependency>
+        <!-- 集成mysql连接 -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.22</version>
+        </dependency>
+```
+
+### 2.2 配置数据源
+
+在`application.properties`中添加数据库连接：
+
+```properties
+# 增加数据库连接
+spring.datasource.url=jdbc:mysql://localhost:3306/wiki?characterEncoding=UTF8&autoReconnect=true&serverTimezone=Asia/Shanghai
+spring.datasource.username=root
+spring.datasource.password=Hlsdzpdw123
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+```
+
+
+
+### 3. Mybatis示例
+
+#### 3.1 1. 新建 `domain` 包，创建 `Test` 实体类
+
+```java
+package cn.ll.domain;
+
+/**
+ * @author liuli
+ */
+public class Test {
+
+    private String name;
+
+    private Integer id;
+
+    private String password;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}
+
+```
