@@ -554,3 +554,50 @@ public class TestController {
 3. 开启自动编译，开启静态自动编译，打开右上角File->Settings，找到 Advanced Settings，勾选Allow auto-make to start even if developed application is currently running
 
 ![image-20220524180235798](wiki知识库.assets/image-20220524180235798.png)
+
+# 后端架构完善与接口开发
+
+## 1. IDEA数据库插件pei'zhi
+
+右侧栏找到Database，点击加号，选择Data Source->Mysql:
+
+![image-20220525113440875](wiki知识库.assets/image-20220525113440875.png)
+
+填写地址以及用户名密码和所选数据库：
+
+![image-20220525113528398](wiki知识库.assets/image-20220525113528398.png)
+
+随后点击Test Connection，第一次需要下载相关驱动。
+
+测试连接成功后点击ok即可。
+
+新建测试表：
+
+```sql
+drop table if exists `test`;
+create table `test` (
+  `id` bigint not null comment 'id',
+  `name` varchar(50) comment '名称',
+  `password` varchar(50) comment '密码',
+  primary key (`id`)
+) engine=innodb default charset=utf8mb4 comment='测试';
+```
+
+全选运行即可执行：
+
+![image-20220525114418029](wiki知识库.assets/image-20220525114418029.png)
+
+在项目根目录新建doc文件夹，然后新建 `all.sql` 文件用来存放数据库脚本：
+
+```sql
+drop table if exists `test`;
+create table `test` (
+        `id` bigint not null comment 'id',
+        `name` varchar(50) comment '名称',
+        `password` varchar(50) comment '密码',
+        primary key (`id`)
+) engine=innodb default charset=utf8mb4 comment='测试';
+```
+
+以后需要修改数据库信息可以在这里面填写sql语句执行，不需要切屏到数据库操作软件，很方便。
+
