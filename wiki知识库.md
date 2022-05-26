@@ -772,13 +772,13 @@ public class TestService {
 }
 ```
 
-这里可以使用@Autowired也可以使用@Resource。
+这里可以使用`@Autowired`也可以使用`@Resource`。
 
-@Autowired是spring注解，@Resource是jdk注解，推荐@Resource。
+`@Autowired`是spring注解，`@Resource`是jdk注解，推荐@Resource。
 
 #### 2.3.5 在controller层中新增get请求
 
-在TestController.java中注入testService并添加list方法：
+在`TestController.java`中注入`testService`并添加list方法：
 
 ```java
 @Resource
@@ -808,3 +808,244 @@ GET http://localhost:8080/test/list
 运行结果：
 
 ![image-20220525152736322](wiki知识库.assets/image-20220525152736322.png)
+
+### 2.4 集成官方Mybatis代码生成器
+
+#### 2.4.1 集成Mybatis Generator
+
+##### 2.4.1.1 添加依赖
+
+在`pom.xml`中添加依赖：
+
+```xml
+  <!-- mybatis generator 自动生成代码插件 -->
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>1.4.0</version>
+                <configuration>
+                    <configurationFile>src/main/resources/generator/generator-config.xml</configurationFile>
+                    <overwrite>true</overwrite>
+                    <verbose>true</verbose>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>8.0.22</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+```
+
+##### 2.4.1.2 新建配置文件
+
+在`resources`目录下新建`generator`目录，存放配置文件`generator-config.xml`：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <context id="Mysql" targetRuntime="MyBatis3" defaultModelType="flat">
+
+        <!-- 自动检查关键字，为关键字增加反引号 -->
+        <property name="autoDelimitKeywords" value="true"/>
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
+
+        <!--覆盖生成XML文件-->
+        <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin" />
+        <!-- 生成的实体类添加toString()方法 -->
+        <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
+
+        <!-- 不生成注释 -->
+<!--        <commentGenerator>-->
+<!--            <property name="suppressAllComments" value="true"/>-->
+<!--        </commentGenerator>-->
+
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/wikidev?serverTimezone=Asia/Shanghai"
+                        userId="root"
+                        password="Hlsdzpdw123">
+        </jdbcConnection>
+
+        <!-- domain类的位置 -->
+        <javaModelGenerator targetProject="src\main\java"
+                            targetPackage="cn.ll.domain"/>
+
+        <!-- mapper xml的位置 -->
+        <sqlMapGenerator targetProject="src\main\resources"
+                         targetPackage="mapper"/>
+
+        <!-- mapper类的位置 -->
+        <javaClientGenerator targetProject="src\main\java"
+                             targetPackage="cn.ll.mapper"
+                             type="XMLMAPPER"/>
+
+        <table tableName="demo" domainObjectName="Demo"/>
+    </context>
+</generatorConfiguration>
+```
+
+##### 2.4.1.3 新建demo表
+
+在`all.sql`中添加以下代码：
+
+```sql
+drop table if exists `demo`;
+create table `demo` (
+                        `id` bigint not null comment 'id',
+                        `name` varchar(50) comment '名称',
+                        primary key (`id`)
+) engine=innodb default charset=utf8mb4 comment='测试';
+
+insert into `demo` (id, name) values (1, '测试');
+```
+
+##### 2.4.1.4 新增启动命令
+
+ 项目运行位置点击`Edit Configurations`
+
+![image-20220526111408443](wiki知识库.assets/image-20220526111408443.png)
+
+右上角点击+，选择`maven`，在`Command line`位置填写`mybatis-generator:generate -e`：
+
+![image-20220526120017786](wiki知识库.assets/image-20220526120017786.png)
+
+点击项目运行即可生成文件
+
+![image-20220526120433572](wiki知识库.assets/image-20220526120433572.png)
+
+#### 2.4.2 示例
+
+##### 2.4.2.1 新建Service层代码
+
+新建`DemoService.java`：
+
+```java
+package cn.ll.service;
+
+import cn.ll.domain.Demo;
+import cn.ll.mapper.DemoMapper;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class DemoService {
+    
+    private DemoMapper demoMapper;
+    
+    public List<Demo> list(){
+        return demoMapper.selectByExample(null);
+    }
+    
+}
+
+```
+
+
+
+##### 2.4.2.2 新建Controller层代码
+
+新建`DemoController.java`:
+
+```java
+package cn.ll.controller;
+
+import cn.ll.domain.Demo;
+import cn.ll.service.DemoService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+/**
+ * @author liuli
+ */
+//@Controller
+@RestController
+public class DemoController {
+
+    @Resource
+    private DemoService demoService;
+
+    @GetMapping("/demo/list")
+    public List<Demo> list(){
+        return demoService.list();
+    }
+
+}
+```
+
+##### 2.4.2.3 新建demo测试脚本
+
+在`http`目录下新建`demo.http`:
+
+```http
+GET http://localhost:8080/demo/list
+
+```
+
+运行结果：
+
+![image-20220526121248861](wiki知识库.assets/image-20220526121248861.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
