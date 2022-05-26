@@ -997,15 +997,122 @@ GET http://localhost:8080/demo/list
 
 
 
+## 3. 电子书列表查询接口开发
+
+### 3.1 电子书表结构设计
+
+```sql
+# 电子书表
+drop table if exists `ebook`;
+create table `ebook` (
+  `id` bigint not null comment 'id',
+  `name` varchar(50) comment '名称',
+  `category1_id` bigint comment '分类1',
+  `category2_id` bigint comment '分类2',
+  `description` varchar(200) comment '描述',
+  `cover` varchar(200) comment '封面',
+  `doc_count` int comment '文档数',
+  `view_count` int comment '阅读数',
+  `vote_count` int comment '点赞数',
+  primary key (`id`)
+) engine=innodb default charset=utf8mb4 comment='电子书';
+
+insert into `ebook` (id, name, description) values (1, 'Spring Boot 入门教程', '零基础入门 Java 开发，企业级应用开发最佳首选框架');
+insert into `ebook` (id, name, description) values (2, 'Vue 入门教程', '零基础入门 Vue 开发，企业级应用开发最佳首选框架');
+insert into `ebook` (id, name, description) values (3, 'Python 入门教程', '零基础入门 Python 开发，企业级应用开发最佳首选框架');
+insert into `ebook` (id, name, description) values (4, 'Mysql 入门教程', '零基础入门 Mysql 开发，企业级应用开发最佳首选框架');
+insert into `ebook` (id, name, description) values (5, 'Oracle 入门教程', '零基础入门 Oracle 开发，企业级应用开发最佳首选框架');
+
+```
+
+### 3.2 使用代码生成器生成Ebook相关代码
+
+修改`generator-config.xml`文件中的`table`：
+
+```xml
+        <table tableName="ebook" domainObjectName="Ebook"/>
+
+```
+
+点击运行生成`ebook`相关代码。
+
+### 3.3 新建service层代码
+
+新建`EbookService.java`:
+
+```java
+package cn.ll.service;
+
+import cn.ll.domain.Ebook;
+import cn.ll.mapper.EbookMapper;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+@Service
+public class EbookService {
+
+    @Resource
+    private EbookMapper ebookMapper;
 
 
 
+    public List<Ebook> list(){
+        return ebookMapper.selectByExample(null);
+    }
 
 
+}
+
+```
+
+### 3.4 新建Controller层代码
+
+新建`EbookController.java`：
+
+```java
+package cn.ll.controller;
+
+import cn.ll.domain.Ebook;
+import cn.ll.service.EbookService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+@RestController
+@RequestMapping("/ebook")
+public class EbookController {
+
+    @Resource
+    private EbookService ebookService;
 
 
+    @GetMapping("/list")
+    public List<Ebook> list(){
+        return ebookService.list();
+    }
 
 
+}
+
+```
+
+### 3.5 新建测试脚本ebook.http
+
+在http目录下新建ebook.http:
+
+```http
+GET http://localhost:8080/ebook/list
+
+```
+
+运行结果：
+
+![image-20220526162415133](wiki知识库.assets/image-20220526162415133.png)
 
 
 
