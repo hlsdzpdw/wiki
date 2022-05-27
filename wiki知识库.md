@@ -1116,11 +1116,113 @@ GET http://localhost:8080/ebook/list
 
 
 
+## 4. 封装通用返回类CommonResp
+
+后端会有很多接口，为了让前端能够统一处理多级（登录校验、权限管理），需要统一后端的返回值。
+
+### 4.1 新建resp包，创建CommonResp类
+
+resp是response的缩写
+
+```java
+public class CommonResp<T> {
+
+    /**
+     * 业务上的成功或失败
+     */
+    private boolean success = true;
+
+    /**
+     * 返回信息
+     */
+    private String message;
+
+    /**
+     * 返回泛型数据，自定义类型
+     */
+    private T content;
+
+    public boolean getSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public T getContent() {
+        return content;
+    }
+
+    public void setContent(T content) {
+        this.content = content;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("ResponseDto{");
+        sb.append("success=").append(success);
+        sb.append(", message='").append(message).append('\'');
+        sb.append(", content=").append(content);
+        sb.append('}');
+        return sb.toString();
+    }
+}
+```
 
 
 
+### 4.2 改造Centroller层代码
+
+```java
+package cn.ll.controller;
+
+import cn.ll.domain.Ebook;
+import cn.ll.resp.CommonResp;
+import cn.ll.service.EbookService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+@RestController
+@RequestMapping("/ebook")
+public class EbookController {
+
+    @Resource
+    private EbookService ebookService;
 
 
+    @GetMapping("/list")
+    public CommonResp list(){
+        CommonResp<List<Ebook>> resp = new CommonResp<>();
+        List<Ebook> list = ebookService.list();
+        resp.setContent(list);
+        return resp;
+    }
+
+
+}
+
+```
+
+运行测试脚本得到的返回值：
+
+![image-20220527141352529](wiki知识库.assets/image-20220527141352529.png)
+
+这样做的好处是前端可以根据返回值获取想要的东西。
+
+以后所有后端的返回值全部都是CommonResp，只有Content是不一样的。
 
 
 
