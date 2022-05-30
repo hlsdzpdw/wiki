@@ -1226,13 +1226,90 @@ public class EbookController {
 
 
 
+## 5. 根据名称模糊查询
+
+### 5.1 修改Controller层代码
+
+修改EbookController.java中的参数：
+
+```java
+package cn.ll.controller;
+
+import cn.ll.domain.Ebook;
+import cn.ll.resp.CommonResp;
+import cn.ll.service.EbookService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+@RestController
+@RequestMapping("/ebook")
+public class EbookController {
+
+    @Resource
+    private EbookService ebookService;
+
+
+    @GetMapping("/list")
+    public CommonResp list(String name){
+        CommonResp<List<Ebook>> resp = new CommonResp<>();
+        List<Ebook> list = ebookService.list();
+        resp.setContent(list);
+        return resp;
+    }
+
+
+}
+
+```
+
+### 5.2 修改Service层代码
+
+```java
+package cn.ll.service;
+
+import cn.ll.domain.Ebook;
+import cn.ll.domain.EbookExample;
+import cn.ll.mapper.EbookMapper;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+@Service
+public class EbookService {
+
+    @Resource
+    private EbookMapper ebookMapper;
 
 
 
+    public List<Ebook> list(String name){
+        EbookExample ebookExample = new EbookExample();
+        EbookExample.Criteria criteria = ebookExample.createCriteria();
+        criteria.andNameLike("%" + name + "%");
+        return ebookMapper.selectByExample(ebookExample);
+    }
+
+
+}
+
+```
+
+Criteria相当于Where条件。
+
+不管哪张表的Example，一下两行写法是固定的：
+
+![image-20220530161057262](wiki知识库.assets/image-20220530161057262.png)
 
 
 
+运行测试结果，name传值spring，运行结果：
 
+![image-20220530161316261](wiki知识库.assets/image-20220530161316261.png)
 
 
 

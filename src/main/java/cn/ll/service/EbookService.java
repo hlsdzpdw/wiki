@@ -1,6 +1,7 @@
 package cn.ll.service;
 
 import cn.ll.domain.Ebook;
+import cn.ll.domain.EbookExample;
 import cn.ll.mapper.EbookMapper;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +16,11 @@ public class EbookService {
 
 
 
-    public List<Ebook> list(){
-        return ebookMapper.selectByExample(null);
+    public List<Ebook> list(String name){
+        EbookExample ebookExample = new EbookExample();
+        EbookExample.Criteria criteria = ebookExample.createCriteria();
+        criteria.andNameLike("%" + name + "%");
+        return ebookMapper.selectByExample(ebookExample);
     }
 
 
