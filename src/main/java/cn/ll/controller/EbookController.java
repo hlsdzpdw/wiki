@@ -1,6 +1,7 @@
 package cn.ll.controller;
 
 import cn.ll.domain.Ebook;
+import cn.ll.req.EbookReq;
 import cn.ll.resp.CommonResp;
 import cn.ll.service.EbookService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +20,9 @@ public class EbookController {
 
 
     @GetMapping("/list")
-    public CommonResp list(String name){
+    public CommonResp list(EbookReq req){
         CommonResp<List<Ebook>> resp = new CommonResp<>();
-        List<Ebook> list = ebookService.list(name);
+        List<Ebook> list = ebookService.list(req);
         resp.setContent(list);
         return resp;
     }

@@ -1103,7 +1103,7 @@ public class EbookController {
 
 ### 3.5 新建测试脚本ebook.http
 
-在http目录下新建ebook.http:
+在`http`目录下新建`ebook.http`:
 
 ```http
 GET http://localhost:8080/ebook/list
@@ -1122,7 +1122,7 @@ GET http://localhost:8080/ebook/list
 
 ### 4.1 新建resp包，创建CommonResp类
 
-resp是response的缩写
+`resp`是`response`的缩写
 
 ```java
 public class CommonResp<T> {
@@ -1222,7 +1222,7 @@ public class EbookController {
 
 这样做的好处是前端可以根据返回值获取想要的东西。
 
-以后所有后端的返回值全部都是CommonResp，只有Content是不一样的。
+以后所有后端的返回值全部都是`CommonResp`，只有`Content`是不一样的。
 
 
 
@@ -1230,7 +1230,7 @@ public class EbookController {
 
 ### 5.1 修改Controller层代码
 
-修改EbookController.java中的参数：
+修改`EbookController.java`中的参数：
 
 ```java
 package cn.ll.controller;
@@ -1268,6 +1268,8 @@ public class EbookController {
 
 ### 5.2 修改Service层代码
 
+修改`EbookService.java`：
+
 ```java
 package cn.ll.service;
 
@@ -1299,23 +1301,147 @@ public class EbookService {
 
 ```
 
-Criteria相当于Where条件。
+`Criteria`相当于`Where`条件。
 
-不管哪张表的Example，一下两行写法是固定的：
+不管哪张表的`Example`，一下两行写法是固定的：
 
 ![image-20220530161057262](wiki知识库.assets/image-20220530161057262.png)
 
 
 
-运行测试结果，name传值spring，运行结果：
+运行测试结果，`name`传值`spring`，运行结果：
 
 ![image-20220530161316261](wiki知识库.assets/image-20220530161316261.png)
 
 
 
+## 6. 封装请求参数
+
+### 6.1 新建req包，创建EbookReq类
+
+`req`是`request`的缩写。
+
+`EbookReq.java`:
+
+```java
+package cn.ll.req;
+
+public class EbookReq {
+    private Long id;
+
+    private String name;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append("Hash = ").append(hashCode());
+        sb.append(", id=").append(id);
+        sb.append(", name=").append(name);
+        sb.append("]");
+        return sb.toString();
+    }
+}
+
+```
+
+`toString`主要是用来打印日志的。
+
+### 6.2 修改Controller层代码
+
+修改`EbookController.java`:
+
+```java
+package cn.ll.controller;
+
+import cn.ll.domain.Ebook;
+import cn.ll.req.EbookReq;
+import cn.ll.resp.CommonResp;
+import cn.ll.service.EbookService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+@RestController
+@RequestMapping("/ebook")
+public class EbookController {
+
+    @Resource
+    private EbookService ebookService;
+
+
+    @GetMapping("/list")
+    public CommonResp list(EbookReq req){
+        CommonResp<List<Ebook>> resp = new CommonResp<>();
+        List<Ebook> list = ebookService.list(req);
+        resp.setContent(list);
+        return resp;
+    }
+
+
+}
+
+```
+
+### 6.3 修改Service层代码
+
+修改`EbookService.java`:
+
+```java
+package cn.ll.service;
+
+import cn.ll.domain.Ebook;
+import cn.ll.domain.EbookExample;
+import cn.ll.mapper.EbookMapper;
+import cn.ll.req.EbookReq;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+@Service
+public class EbookService {
+
+    @Resource
+    private EbookMapper ebookMapper;
 
 
 
+    public List<Ebook> list(EbookReq req){
+        EbookExample ebookExample = new EbookExample();
+        EbookExample.Criteria criteria = ebookExample.createCriteria();
+        criteria.andNameLike("%" + req.getName() + "%");
+        return ebookMapper.selectByExample(ebookExample);
+    }
+
+
+}
+
+```
+
+运行测试脚本同样可以查询到结果：
+
+![image-20220530170455005](wiki知识库.assets/image-20220530170455005.png)
 
 
 
