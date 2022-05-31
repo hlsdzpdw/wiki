@@ -1445,13 +1445,220 @@ public class EbookService {
 
 
 
+`Spring`会自动将参数映射到类属性。
+
+##  7. 封装返回参数
+
+### 7.1 新建EbookResp类
+
+修改`EbookResp.java`:
+
+```java
+package cn.ll.resp;
+
+public class EbookResp {
+    private Long id;
+
+    private String name;
+
+    private Long category1Id;
+
+    private Long category2Id;
+
+    private String description;
+
+    private String cover;
+
+    private Integer docCount;
+
+    private Integer viewCount;
+
+    private Integer voteCount;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long getCategory1Id() {
+        return category1Id;
+    }
+
+    public void setCategory1Id(Long category1Id) {
+        this.category1Id = category1Id;
+    }
+
+    public Long getCategory2Id() {
+        return category2Id;
+    }
+
+    public void setCategory2Id(Long category2Id) {
+        this.category2Id = category2Id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCover() {
+        return cover;
+    }
+
+    public void setCover(String cover) {
+        this.cover = cover;
+    }
+
+    public Integer getDocCount() {
+        return docCount;
+    }
+
+    public void setDocCount(Integer docCount) {
+        this.docCount = docCount;
+    }
+
+    public Integer getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(Integer viewCount) {
+        this.viewCount = viewCount;
+    }
+
+    public Integer getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(Integer voteCount) {
+        this.voteCount = voteCount;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append("Hash = ").append(hashCode());
+        sb.append(", id=").append(id);
+        sb.append(", name=").append(name);
+        sb.append(", category1Id=").append(category1Id);
+        sb.append(", category2Id=").append(category2Id);
+        sb.append(", description=").append(description);
+        sb.append(", cover=").append(cover);
+        sb.append(", docCount=").append(docCount);
+        sb.append(", viewCount=").append(viewCount);
+        sb.append(", voteCount=").append(voteCount);
+        sb.append("]");
+        return sb.toString();
+    }
+}
+```
+
+### 7.2 修改Service层代码
+
+修改`EbookService.java`:
+
+```
+package cn.ll.service;
+
+import cn.ll.domain.Ebook;
+import cn.ll.domain.EbookExample;
+import cn.ll.mapper.EbookMapper;
+import cn.ll.req.EbookReq;
+import cn.ll.resp.EbookResp;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class EbookService {
+
+    @Resource
+    private EbookMapper ebookMapper;
 
 
 
+    public List<EbookResp> list(EbookReq req){
+        EbookExample ebookExample = new EbookExample();
+        EbookExample.Criteria criteria = ebookExample.createCriteria();
+        criteria.andNameLike("%" + req.getName() + "%");
+        List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
+
+        List<EbookResp> respList = new ArrayList<>();
+        for (Ebook ebook : ebookList) {
+            EbookResp ebookResp = new EbookResp();
+            BeanUtils.copyProperties(ebook, ebookResp);
+            respList.add(ebookResp);
+        }
+
+        return respList;
+
+    }
 
 
+}
+
+```
+
+持久层返回`List<Ebook>`需要转成`List<EbookResp>`在返回`controller`。
+
+### 7.3 修改Controller层代码
+
+修改`EbookController.java`:
+
+```java
+package cn.ll.controller;
+
+import cn.ll.req.EbookReq;
+import cn.ll.resp.CommonResp;
+import cn.ll.resp.EbookResp;
+import cn.ll.service.EbookService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+@RestController
+@RequestMapping("/ebook")
+public class EbookController {
+
+    @Resource
+    private EbookService ebookService;
 
 
+    @GetMapping("/list")
+    public CommonResp list(EbookReq req){
+        CommonResp<List<EbookResp>> resp = new CommonResp<>();
+        List<EbookResp> list = ebookService.list(req);
+        resp.setContent(list);
+        return resp;
+    }
+
+
+}
+
+```
+
+运行测试脚本同样可以查询到结果。
 
 
 
