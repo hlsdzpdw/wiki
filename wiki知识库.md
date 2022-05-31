@@ -1662,9 +1662,107 @@ public class EbookController {
 
 
 
+## 8. 制作CopyUtil封装BeanUtils
+
+### 8.1 新建CopyUtil类
+
+新建`util`包，创建`CopyUtil`：
+
+```java
+public class CopyUtil {
+
+    /**
+     * 单体复制
+     */
+    public static <T> T copy(Object source, Class<T> clazz) {
+        if (source == null) {
+            return null;
+        }
+        T obj = null;
+        try {
+            obj = clazz.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        BeanUtils.copyProperties(source, obj);
+        return obj;
+    }
+
+    /**
+     * 列表复制
+     */
+    public static <T> List<T> copyList(List source, Class<T> clazz) {
+        List<T> target = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(source)){
+            for (Object c: source) {
+                T obj = copy(c, clazz);
+                target.add(obj);
+            }
+        }
+        return target;
+    }
+}
+
+```
 
 
 
+### 8.2 实际用法
+
+修改`EbookService.java`:
+
+```java
+package cn.ll.service;
+
+import cn.ll.domain.Ebook;
+import cn.ll.domain.EbookExample;
+import cn.ll.mapper.EbookMapper;
+import cn.ll.req.EbookReq;
+import cn.ll.resp.EbookResp;
+import cn.ll.util.CopyUtil;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author liuli
+ */
+@Service
+public class EbookService {
+
+//  @Autowired
+    @Resource
+    private EbookMapper ebookMapper;
+
+    public List<EbookResp> list(EbookReq req){
+        EbookExample ebookExample = new EbookExample();
+        EbookExample.Criteria criteria = ebookExample.createCriteria();
+        criteria.andNameLike("%" + req.getName() + "%");
+
+        List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
+
+        // List<EbookResp> respList = new ArrayList<>();
+        // for (Ebook ebook : ebookList) {
+        //     // EbookResp ebookResp = new EbookResp();
+        //     // BeanUtils.copyProperties(ebook, ebookResp);
+        //     // 对象复制
+        //     EbookResp ebookResp = CopyUtil.copy(ebook, EbookResp.class);
+        //
+        //     respList.add(ebookResp);
+        // }
+
+        // 列表复制
+        List<EbookResp> list = CopyUtil.copyList(ebookList, EbookResp.class);
+        return list;
+    }
+
+}
+
+```
 
 
 
