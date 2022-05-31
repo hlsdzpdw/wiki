@@ -1766,3 +1766,85 @@ public class EbookService {
 
 
 
+
+
+
+
+# Vue + Vue CLI项目搭建
+
+## 1. Vue和Vue CLI是什么
+
+- Vue.js是构建用户界面的渐进式框架。
+
+  Vue3文档 - vuejs
+  https://www.vue3js.cn/docs/zh/
+
+  Vue核心功能：数据绑定
+
+- Vue CLI是基于快速开发的完整系统。
+
+  Vue CLI文档
+  https://cli.vuejs.org/zh/guide/
+
+  Vue CLI = Vue.js + 一堆组件
+
+## 2. 创建Vue CLI项目
+
+### 2.1 安装Vue CLI
+
+在IDEA下方点击`Terminal`， 这个`Terminal`就相当于我们`windows`的`cmd`命令行，在命令行中输入以下代码用来更改镜像查看镜像：
+
+```
+npm get registry  --显示当前的镜像网址
+npm config set registry http://registry.npm.taobao.org  -- 使用淘宝的镜像网址
+如果不行，改成用https试试
+```
+
+![image-20220531160822783](wiki知识库.assets/image-20220531160822783.png)
+
+安装`Vue CLI`命令：
+
+```
+npm install -g @vue/cli@4.5.9
+
+```
+
+### 2.2 创建web应用
+
+创建`web`命令：
+
+```
+vue create web
+
+```
+
+
+
+![image-20220330133118225](wiki知识库.assets/image-20220330133118225.png)
+
+选择最下面的选项  `Manually select features`手动选择功能
+
+勾选`TypeScript`、`Router`（页面路由）、`vuex`（用于全局变量）。
+
+空格选中，回车确定。
+
+![image-20220330133602554](wiki知识库.assets/image-20220330133602554.png)
+
+选择3.x。
+
+![image-20220330133715074](wiki知识库.assets/image-20220330133715074.png)
+
+`pick a linter/formatter config` 选择`ESLint with error prevention only`，其余按照下方选择：
+
+![image-20220330143711355](wiki知识库.assets/image-20220330143711355.png)
+
+### 2.3 启动web应用
+
+找到web->package.json，右键点击Show npm Scripts。
+
+![image-20220531202021780](wiki知识库.assets/image-20220531202021780.png)
+
+双击serve即可启动web应用。
+
+![image-20220531202150701](wiki知识库.assets/image-20220531202150701.png)
+
