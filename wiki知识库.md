@@ -1895,7 +1895,103 @@ vue create web
 
 **tsconfig.json**： 整个项目的配置文件。
 
-以后项目开发主要集中在src文件夹里。
+以后项目开发主要集中在`src`文件夹里。
+
+
+
+
+
+## 4. 集成Ant Design Vue
+
+### 4.1 Ant Design Vue简介
+
+`ant-design-vue`是蚂蚁金服 `Ant Design` 官方唯一推荐的Vue版UI组件库，它其实是`Ant Design`的`Vue`实现，组件的风格与`Ant Design`保持同步，组件的`html`结构和`css`样式也保持一致。 
+
+
+
+### 4.2 集成Ant Design Vue
+
+打开`IDEA`自带的控制台，进入`web`目录：
+
+```
+cd web
+```
+
+然后输入安装命令：
+
+```
+npm install ant-design-vue --save
+
+```
+
+
+
+### 4.3 按钮示例
+
+我们要使用组件需要引入组件，我们可以要完整引入需要在`main.ts`中添加代码：
+
+```
+import Antd from 'ant-design-vue'; 
+import 'ant-design-vue/dist/antd.css';
+use(Antd)
+```
+
+第一行是引入`ant-design-vue`，第二行是引入`ant-design-vue`的`css`样式，最后一行是使用`ant-design-vue`组件。
+
+![image-20220602202501897](wiki知识库.assets/image-20220602202501897.png)
+
+接下来可以去官网中选择你自己想要的按钮样式复制下来，在`home`页面添加：
+
+按钮样式：
+
+```vue
+<a-button type="primary">Primary Button</a-button>
+```
+
+完整`home.vue`：
+
+```vue
+<template>
+  <div class="home">
+    <a-button type="primary">Primary Button</a-button>
+    <img alt="Vue logo" src="../assets/logo.png">
+    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
+
+export default defineComponent({
+  name: 'Home',
+  components: {
+    HelloWorld,
+  },
+});
+</script>
+
+```
+
+这样运行项目可以看到我们的按钮就添加好了。
+
+![image-20220602203001328](wiki知识库.assets/image-20220602203001328.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
