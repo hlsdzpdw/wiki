@@ -1840,11 +1840,66 @@ vue create web
 
 ### 2.3 启动web应用
 
-找到web->package.json，右键点击Show npm Scripts。
+找到`web`->`package.json`，右键点击`Show npm Scripts`。
 
 ![image-20220531202021780](wiki知识库.assets/image-20220531202021780.png)
 
-双击serve即可启动web应用。
+双击`serve`即可启动`web`应用。
 
 ![image-20220531202150701](wiki知识库.assets/image-20220531202150701.png)
+
+## 3. Vue CLI项目结构讲解
+
+![image-20220601183924562](wiki知识库.assets/image-20220601183924562.png)
+
+**web**： `web`文件夹就是我们上节课创建的`web`项目，所有的代码都存放在其中。
+
+**node_modules**： 这个文件夹存放的是整个`web`项目依赖的所有`JS`模块。
+
+**public**： 启动的首页就放在该文件夹下。`favicon.ico`是一个`vue`图标，它相当于一个静态资源，如果想要引用静态资源可以参考`index.html`中的以下代码：
+
+```vue
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+
+```
+
+**src**： 以后所写的vue代码全部存放在该目录下。
+
+**assets**： 静态资源目录，静态资源可以存放在该目录和`public`目录下。这里的静态资源引用和`public`目录下的不同。
+
+**components**： 组件目录，以后会写很多组件都会存放在该目录下。
+
+**router**： 路由目录。
+
+**store**： 用于全局存数据。
+
+**views**： 页面目录。
+
+**App.vue**： `App.vue`是初始内容页面。
+
+**main.ts**： 初始启动（配置）文件。`Vue CLI`初始执行`main.ts`，将内容也`App.vue`渲染到`index.html`，完成页面显示。
+
+**shims-vue.d.ts**： 定义文件，平时不需要去管。
+
+**.browserslistrc**：  浏览器兼容，平时不需要去管。
+
+**.eslintrc.js**： 语法检查插件。
+
+**.gitignore**： 配置不需要交给git管理的文件。**任意目录下都可以增加`.gitignore`**。
+
+**package.json**： 相当于`pom.xml`，定义了所有依赖的`JS`。
+
+**package-lock.json**： 用于锁定小的版本号。
+
+**README.md**： 说明文件，在子目录没什么用。
+
+**tsconfig.json**： 整个项目的配置文件。
+
+以后项目开发主要集中在src文件夹里。
+
+
+
+
+
+
 
