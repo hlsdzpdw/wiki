@@ -2239,15 +2239,228 @@ export default defineComponent({
 
 
 
-### 
+### 5.3 加入首页路由
+
+要完成路由功能，需要有以下两个标签：
+
+**router-link to**： 这个是路由跳转，标签就相当于`a`标签，`router-link = a`， `to = href`。
+
+**router-view**： 用来填充路由内容。
+
+网站都有页头和页脚，这两部分都是固定的。既然`router-view`可以用来填充内容，那我们可以使用`router-view`来填充网站中间动态的部分。
+
+我们可以剪切中间部分的代码，粘贴到`home.vue`中，在被剪切的位置使用`router-view`填充。
+
+`App.vue`：
+
+```vue
+<template>
+  <a-layout>
+    <a-layout-header class="header">
+      <div class="logo" />
+      <a-menu
+          v-model:selectedKeys="selectedKeys1"
+          theme="dark"
+          mode="horizontal"
+          :style="{ lineHeight: '64px' }"
+      >
+        <a-menu-item key="1">nav 1</a-menu-item>
+        <a-menu-item key="2">nav 2</a-menu-item>
+        <a-menu-item key="3">nav 3</a-menu-item>
+      </a-menu>
+    </a-layout-header>
+    <router-view/>
+    <a-layout-footer :style="{ textAlign: 'center' }">
+      Ant Design ©2018 Created by Ant UED
+    </a-layout-footer>
+  </a-layout>
+</template>
+
+<style>
+#components-layout-demo-top-side-2 .logo {
+  float: left;
+  width: 120px;
+  height: 31px;
+  margin: 16px 24px 16px 0;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.ant-row-rtl #components-layout-demo-top-side-2 .logo {
+  float: right;
+  margin: 16px 0 16px 24px;
+}
+
+.site-layout-background {
+  background: #fff;
+}
+</style>
+
+```
 
 
 
+`home.vue`：
+
+```
+<template>
+  <a-layout>
+    <a-layout-sider width="200" style="background: #fff">
+      <a-menu
+          v-model:selectedKeys="selectedKeys2"
+          v-model:openKeys="openKeys"
+          mode="inline"
+          :style="{ height: '100%', borderRight: 0 }"
+      >
+        <a-sub-menu key="sub1">
+          <template #title>
+              <span>
+                <user-outlined />
+                subnav 1
+              </span>
+          </template>
+          <a-menu-item key="1">option1</a-menu-item>
+          <a-menu-item key="2">option2</a-menu-item>
+          <a-menu-item key="3">option3</a-menu-item>
+          <a-menu-item key="4">option4</a-menu-item>
+        </a-sub-menu>
+        <a-sub-menu key="sub2">
+          <template #title>
+              <span>
+                <laptop-outlined />
+                subnav 2
+              </span>
+          </template>
+          <a-menu-item key="5">option5</a-menu-item>
+          <a-menu-item key="6">option6</a-menu-item>
+          <a-menu-item key="7">option7</a-menu-item>
+          <a-menu-item key="8">option8</a-menu-item>
+        </a-sub-menu>
+        <a-sub-menu key="sub3">
+          <template #title>
+              <span>
+                <notification-outlined />
+                subnav 3
+              </span>
+          </template>
+          <a-menu-item key="9">option9</a-menu-item>
+          <a-menu-item key="10">option10</a-menu-item>
+          <a-menu-item key="11">option11</a-menu-item>
+          <a-menu-item key="12">option12</a-menu-item>
+        </a-sub-menu>
+      </a-menu>
+    </a-layout-sider>
+    <a-layout-content
+        :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
+    >
+      Content
+    </a-layout-content>
+  </a-layout>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
+
+export default defineComponent({
+  name: 'Home',
+  components: {
+    HelloWorld,
+  },
+});
+</script>
+
+```
 
 
 
+改造完代码后我们可以发现一个错误，因为`HelloWorld`组件没有使用，所以会报一个错，这就是校验规则的双刃剑。我们有两种方法可以解决，第一个是直接删除HelloWorld，另外一种就是把校验规则删除掉。
 
+删除校验需要打开`.eslintrc.js`在`rules`中添加一下代码：
 
+```js
+    'vue/no-unused-components' : 'off'
+
+```
+
+![image-20220605020831922](wiki知识库.assets/image-20220605020831922.png)
+
+校验规则删除后即可顺利运行。填充后，网页依旧可以正常显示。
+
+![image-20220605020635300](wiki知识库.assets/image-20220605020635300.png)
+
+首页`logo`未显示，我们可以把`App.vue`中的`style`标签里`.ant-row-rtl #components-layout-demo-top-side-2` 删除，即可正常显示`logo`。
+
+```vue
+<style>
+.logo {
+  float: left;
+  width: 120px;
+  height: 31px;
+  margin: 16px 24px 16px 0;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.ant-row-rtl #components-layout-demo-top-side-2 .logo {
+  float: right;
+  margin: 16px 0 16px 24px;
+}
+
+.site-layout-background {
+  background: #fff;
+}
+</style>
+
+```
+
+改在完的`App.vue`:
+
+```vue
+<template>
+  <a-layout>
+    <a-layout-header class="header">
+      <div class="logo" />
+      <a-menu
+          v-model:selectedKeys="selectedKeys1"
+          theme="dark"
+          mode="horizontal"
+          :style="{ lineHeight: '64px' }"
+      >
+        <a-menu-item key="1">nav 1</a-menu-item>
+        <a-menu-item key="2">nav 2</a-menu-item>
+        <a-menu-item key="3">nav 3</a-menu-item>
+      </a-menu>
+    </a-layout-header>
+    <router-view/>
+    <a-layout-footer :style="{ textAlign: 'center' }">
+      Ant Design ©2018 Created by Ant UED
+    </a-layout-footer>
+  </a-layout>
+</template>
+
+<style>
+.logo {
+  float: left;
+  width: 120px;
+  height: 31px;
+  margin: 16px 24px 16px 0;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.ant-row-rtl #components-layout-demo-top-side-2 .logo {
+  float: right;
+  margin: 16px 0 16px 24px;
+}
+
+.site-layout-background {
+  background: #fff;
+}
+</style>
+
+```
+
+网页画面：
+
+![image-20220605234952629](wiki知识库.assets/image-20220605234952629.png)
 
 
 
