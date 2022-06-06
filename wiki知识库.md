@@ -2628,42 +2628,93 @@ export default defineComponent({
 打开`IDEA`自带`Terminal`控制台，`cd`进入`web`目录，输入以下命令进行安装：
 
 ```
-npm install axios --s
+npm install axios --save
 ```
 
 
 
+### 1.2 使用axios调用电子书列表接口
+
+打开`Home.vue`，使用`axios`需要在`script`标签中`import`：
+
+```
+import axios from "axios";
+
+```
 
 
 
+然后新增`setup`方法：
+
+```
+setup(){
+    console.log("setup")
+    axios.get("GET http://localhost:8080/ebook/list?name=Spring").then((response) => {
+      console.log(response);
+    })
+  }
+```
+
+需要注意的是
+
+```
+then((response) => {
+      console.log(response);
+    })
+```
+
+等价于
+
+```
+then(function (response) {
+      console.log(response);
+    })
+```
+
+两种写法都可以。
+
+我们可以启动前端和后端，因为数据还没有显示到对面，我们需要按F12来查看。这时我们会发现
+
+![image-20220606225341163](wiki知识库.assets/image-20220606225341163.png)
+
+一旦看到`No 'Access-Control-Allow-Origin'`这种错误，这就是一个跨域的问题。
+
+跨域可以这样来理解，来自一个IP端口的页面（vue项目），要访问另一个IP端口的资源（SpringBoot请求接口），会产生跨域访问。
+
+要解决跨域问题，我们需要添加配置类，在config包下新建CorsConfig.java：
+
+```
+@Configuration
+public class CorsConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**") // 映射的请求地址，这样写是表示针对所有的请求地址
+                .allowedOriginPatterns("*") // 允许来源
+                .allowedHeaders(CorsConfiguration.ALL) //表示通过的请求头
+                .allowedMethods(CorsConfiguration.ALL) // 表示可行的请求方法
+                .allowCredentials(true) // 凭证
+                .maxAge(3600); // 1小时内不需要再预检（发OPTIONS请求）
+    }
+
+}
+```
+
+OPTIONS请求的意思是，在调用电子书接口之前，会发一个OPTIONS请求，来检查接口是否存在
+
+![image-20220606225925957](wiki知识库.assets/image-20220606225925957.png)
 
 
 
+在跨域上面还有一些警告，这主要是一个数据绑定的问题，我们的界面需要绑定参数，而我们的js还没有定义，所以会有一个警告，如果不想看到这些警告可以在IDEA中搜索这些参数然后删除这行代码。
+
+问题都解决后重新运行前后端项目
+
+![image-20220607002120847](wiki知识库.assets/image-20220607002120847.png)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+成功查询到数据。
 
 
 
