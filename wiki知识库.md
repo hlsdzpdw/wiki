@@ -2464,13 +2464,88 @@ export default defineComponent({
 
 
 
+## 6. 制作Vue自定义组件
+
+### 6.1 制作the-header组件
+
+复制`header`代码，在`components`目录下新建`the-header.vue`，用一个`template`标签包含复制的`header`代码：
+
+```vue
+<template>
+  <a-layout-header class="header">
+    <div class="logo" />
+    <a-menu
+        v-model:selectedKeys="selectedKeys1"
+        theme="dark"
+        mode="horizontal"
+        :style="{ lineHeight: '64px' }"
+    >
+      <a-menu-item key="1">nav 1</a-menu-item>
+      <a-menu-item key="2">nav 2</a-menu-item>
+      <a-menu-item key="3">nav 3</a-menu-item>
+    </a-menu>
+  </a-layout-header>
+</template>
+```
 
 
 
+接下来我们复制`HelloWorld`组件的`script`标签，然后仿照`HelloWorld`的写法写自己的。下面我们来分析一下`HelloWorld`中的`script`标签。
 
+```vue
+<script lang="ts">
+import { defineComponent } from 'vue';
 
+export default defineComponent({
+  name: 'HelloWorld',
+  props: {
+    msg: String,
+  },
+});
+</script>
+```
 
+`name`属性支持驼峰命名。多个单词拼接，首字母大写，如`HelloWorld`，也叫大驼峰。小驼峰：首字母小写，如`helloWorld`，同时也支持中间-的写法。也就是说起一个`the-header`或者`theHeader`都是可以的。
 
+所以`name`我们可以起一个`the-header`。
+
+`props`是用于父子组件之间传递数据，我们这里不需要所以可以删除。
+
+这样我们的组件就完成了。
+
+```vue
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  name: 'the-header',
+  
+});
+</script>
+```
+
+要使用组件首先需要导入组件，我们把`script`标签的内容复制到`App.vue`中。
+
+引入使用需要三个步骤，首先需要import组件页面，然后comonents加入该组件，最后在template中使用组件。
+
+```vue
+<script lang="ts">
+import { defineComponent } from 'vue';
+import TheHeader from "@/components/the-header.vue";
+
+export default defineComponent({
+  name: 'app',
+  components:{
+    TheHeader,
+  }
+
+});
+</script>
+```
+
+注意在`import`里的`TheHeader`就不能使用-连接了，`the-header`会报错的。这里的`name`要改为`app`。
+
+这样我们就可以把`App.vue`中的`header`部分代码删除，替换成`<the-header></the-header>`。这个标签的名字，就跟我们组件的`name`是一样的。
 
 
 
