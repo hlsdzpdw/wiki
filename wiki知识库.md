@@ -2549,9 +2549,9 @@ export default defineComponent({
 
 ### 6.2 制作the-footer组件
 
-制作footer组件的步骤和header一样，所以不在阐述，直接上代码。
+制作`footer`组件的步骤和`header`一样，所以不在阐述，直接上代码。
 
-the-footer.vue：
+`the-footer.vue`：
 
 ```vue
 <template>
@@ -2571,7 +2571,7 @@ export default defineComponent({
 </script>
 ```
 
-App.vue：
+`App.vue`：
 
 ```vue
 <template>
@@ -2619,9 +2619,17 @@ export default defineComponent({
 
 
 
+# 前后端交互整合
 
+## 1. 集成HTTP库axios
 
+### 1.1 集成HTTP库axios
 
+打开`IDEA`自带`Terminal`控制台，`cd`进入`web`目录，输入以下命令进行安装：
+
+```
+npm install axios --s
+```
 
 
 
