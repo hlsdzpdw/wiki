@@ -2718,5 +2718,267 @@ OPTIONS请求的意思是，在调用电子书接口之前，会发一个OPTIONS
 
 
 
+## 2. Vue3数据绑定显示列表数据
+
+### 2.1   vue2和vue3的区别
+
+`vue2`会有`data`，`Mounted`（生命周期）还有`method`，但是在`vue3`中这些都没有了，全部被`setup`代替。
+
+`mounted` 生命周期函数，所谓的生命周期，就是指的这个界面或者说这个组件它从加载进来到销毁。整个过程就叫一个生命周期函数。
+
+### 2.2 vue3生命周期函数
+
+之间说到`Mounted`生命周期函数在`vue3`中被`setup`代替。在`setup`里面，我们会变成一个`onMounted`。
+
+要使用`onMounted`需要`import`进来:
+
+```vue
+import {onMounted} from "vue";
+
+```
+
+然后我们就可以在`setup`里面增加`onMounted`。
+
+`onMounted`是一个函数，所以我们加上一个括号。括号里面有一个回调方法，我们就可以写一个`function`：
+
+```
+setup(){
+	onMounted(function (){
+      
+    })；
+}
+```
+
+在这个方法里我们就可以写初始化的方法。
+
+我们可以把上一节`axios`的内容粘贴到生命周期函数中。
+
+```
+setup(){
+    console.log("setup");
+onMounted(function (){
+      console.log("onMounted");
+      axios.get("http://localhost:8080/ebook/list?name=Spring").then((response) => {
+        console.log(response);
+      });
+    });
+    }
+```
+
+一般初始化的逻辑建议都写到`onMounted`方法里，`setup`就放一些参数定义、方法定义。
+
+`setup`就相当于一个入口。
+
+我们可以运行前端项目然后刷新一下页面按F12查看：
+
+![image-20220607104210059](wiki知识库.assets/image-20220607104210059.png)
 
 
+
+首先会输出`setup`，然后会输出`onMoutend`，然后就会输出我们加载后端数据的结果。
+
+### 2.3 使用vue3 ref实现数据绑定
+
+从上面的日志输出可以看出有个`data`，在`response`里面有一个`data`，这个`data`对应的就是我们后端的`CommonResp`的数据结构。
+
+所以我们在`axios`中声明一个`const`，然后把data中的`content`取出来，`content`对应的就是电子书列表：
+
+```
+const data = response.data;
+        data.content
+```
+
+我们要把内容显示到页面上，就需要定义一个变量，所以在生命周期函数外面定义一个`ebooks`：
+
+```
+const ebooks = ref();
+
+```
+
+`ref`是一个响应式数据，所谓的响应式数据就是说在`js`里面，动态的修改其中的值，它需要实时的反馈到页面上。   
+
+要使用`ref`需要`import`：
+
+```
+import {ref} from "vue";
+
+```
+
+然后我们就可以把`data.content`赋值给`ebooks`，`ref`赋值不能直接`=`，要`.value`才能赋值：
+
+```
+ebooks.value = data.content;
+```
+
+最后还需要在`setup`中把数据`return`出去，这样界面就能拿到:
+
+```
+return {
+      ebooks
+    }
+```
+
+在页面使用`{{xxxx}}`来获取变量，为了美观点可以使用`pre`标签包裹：
+
+```vue
+<pre>
+        {{ebooks}}
+     </pre>
+```
+
+然后我们运行前端项目：
+
+![image-20220607205324927](wiki知识库.assets/image-20220607205324927.png)
+
+### 2.4 使用vue3 reactive实现数据绑定
+
+`reactive`是`vue3`新增的，要使用的话同样需要`import`:
+
+```
+import {reactive} from "vue";
+
+```
+
+`reactive`同样是个方法，括号里面一般是放一个对象。
+
+先定义一个变量，里面放一个空对象，对象里面有一个`books`属性，属性值用来存放电子书列表：
+
+```
+const ebooks1 = reactive({books: [] });
+
+```
+
+然后就可以赋值了：
+
+```
+ebooks1.books = data.content;
+```
+
+赋值完成后还需要把值返回出去，返回的话使用`toRef`方法，`toRef`方法同样是`vue`内置的，新增的一个方法，我们需要`import`：
+
+```
+import {toRef} from "vue";
+
+```
+
+`import`后我们就可以在`return`中写`toRef`方法了，`toRef`方法有两个参数，第一个是`ebooks1`，第二个参数就是里面的属性，比如说把`books`，把这个属性变成一个响应式变量。直接写`toRef`方法不行，必须要个它定义一个变量：
+
+```
+return {
+      ebooks,
+      ebooks2:toRef(ebooks1, "books")
+    }
+```
+
+需要注意的是，这几行的`books`是一一对应的，`ebooks2`是我们自己随便起的。
+
+要	在页面中显示我们可以新增一行：
+
+```
+<pre>
+        {{ebooks}}
+        {{ebooks2}}
+</pre>
+
+```
+
+![image-20220608020007167](wiki知识库.assets/image-20220608020007167.png)
+
+上面的是`ebook`的数据，下面的是`ebooks2`的数据，可以看到两个都成功的绑定了数据。
+
+以下是完整的`Home.vue`代码：
+
+```vue
+<template>
+  <a-layout>
+    <a-layout-sider width="200" style="background: #fff">
+      <a-menu
+
+          mode="inline"
+          :style="{ height: '100%', borderRight: 0 }"
+      >
+        <a-sub-menu key="sub1">
+          <template #title>
+              <span>
+                <user-outlined />
+                subnav 1
+              </span>
+          </template>
+          <a-menu-item key="1">option1</a-menu-item>
+          <a-menu-item key="2">option2</a-menu-item>
+          <a-menu-item key="3">option3</a-menu-item>
+          <a-menu-item key="4">option4</a-menu-item>
+        </a-sub-menu>
+        <a-sub-menu key="sub2">
+          <template #title>
+              <span>
+                <laptop-outlined />
+                subnav 2
+              </span>
+          </template>
+          <a-menu-item key="5">option5</a-menu-item>
+          <a-menu-item key="6">option6</a-menu-item>
+          <a-menu-item key="7">option7</a-menu-item>
+          <a-menu-item key="8">option8</a-menu-item>
+        </a-sub-menu>
+        <a-sub-menu key="sub3">
+          <template #title>
+              <span>
+                <notification-outlined />
+                subnav 3
+              </span>
+          </template>
+          <a-menu-item key="9">option9</a-menu-item>
+          <a-menu-item key="10">option10</a-menu-item>
+          <a-menu-item key="11">option11</a-menu-item>
+          <a-menu-item key="12">option12</a-menu-item>
+        </a-sub-menu>
+      </a-menu>
+    </a-layout-sider>
+    <a-layout-content
+        :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
+    >
+      <pre>
+        {{ebooks}}
+        {{ebooks2}}
+      </pre>
+    </a-layout-content>
+  </a-layout>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import {onMounted} from "vue";
+import {ref} from "vue";
+import {reactive} from "vue";
+import {toRef} from "vue";
+import axios from "axios";
+
+export default defineComponent({
+  name: 'Home',
+  setup(){
+    console.log("setup");
+    const ebooks = ref();
+    const ebooks1 = reactive({books: []});
+    onMounted(function (){
+      console.log("onMounted");
+      axios.get("http://localhost:8080/ebook/list?name=Spring").then((response) => {
+        const data = response.data;
+        ebooks.value = data.content;
+        ebooks1.books = data.content;
+        console.log(response);
+      });
+    });
+
+    return {
+      ebooks,
+      ebooks2:toRef(ebooks1, "books")
+    }
+  }
+
+});
+</script>
+
+```
+
+从两个示例的演示可以看出，`reactive`用起来稍微麻烦一点。在项目开发中尽量做到统一，要么全用`ref`，要么全用`reactive`。使用ref比较麻烦的一点是要去使用变量的话都要加一个`.value`，不管是获取还是赋值，都需要加一个`.value`。
