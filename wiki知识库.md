@@ -2991,9 +2991,9 @@ export default defineComponent({
 
 ![image-20220609164151288](wiki知识库.assets/image-20220609164151288.png)
 
-我们可以复制其中的代码到home.vue。
+我们可以复制其中的代码到`home.vue`。
 
-Home.vue：
+`Home.vue`：
 
 ```vue
 <template>
@@ -3158,3 +3158,56 @@ export default defineComponent({
 我们的页面：
 
 ![image-20220610133732255](wiki知识库.assets/image-20220610133732255.png)
+
+### 3.2 电子书列表展示
+
+![image-20220610134252680](wiki知识库.assets/image-20220610134252680.png)
+
+列表内容众多，我们只保留左侧封面，和内容标题内容描述，下面的内容和右侧封面就不保留了。
+
+![image-20220610174945717](wiki知识库.assets/image-20220610174945717.png)
+
+分页也暂时不需要了，因为我们的电子书不会很多，所以我们一次显示出来。
+
+列表的页脚可以显示也可以不显示，这里我们就暂时不需要了。要改动的就这些，下面我们来改动代码。
+
+![image-20220610232258640](wiki知识库.assets/image-20220610232258640.png)
+
+`data-source`里的内容改为`ebooks`。
+
+`footer`可以直接删除了。
+
+`item`指的是一个一个的电子书，它会自动循环`ebooks`，将每一个电子书设置为`item`这个变量，你可以叫`ebook`或者`a`，或者自己定义都可以。
+
+使用`item.XX`可以访问电子书数据。
+
+`item.title`改为`item.name`。
+
+`#extra`指的是右边的大图，我们不需要可以直接删除掉。
+
+`item.avatar`是图标，然后看一下`sql`，我们的封面是`cover`，所以改为`item.cover`。
+
+`item.content`不需要可以直接删除。
+
+刷新页面：
+
+![image-20220613182500588](wiki知识库.assets/image-20220613182500588.png)
+
+### 3.3 更改list栅格列表
+
+一行显示一条电子书信息会显得肯空旷，我们可以通过修改`List`的`grid`属性来实现栅格列表，`column`可设置期望显示的列数。
+
+下面我们回到`Home.vue`中在`a-list`标签中加入以下代码：
+
+```
+grid="{gutter: 20, column: 3}" 
+```
+
+这段代码可以把一行变成三列，每列的间距是`20px`。
+
+分页不需要，可以删除：
+
+```
+:pagination="pagination"
+```
+
