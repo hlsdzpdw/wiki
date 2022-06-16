@@ -3329,9 +3329,13 @@ console.log('服务端：', process.env.VUE_APP_SERVER);
 
 
 
+### 4.3 修改axios请求地址支持多环境
 
+打开`home.vue`，找到`axios`的请求地址， 把地址替换为：
 
-
+```
+axios.get(process.env.VUE_APP_SERVER + "/ebook/list")
+```
 
 
 
