@@ -3339,6 +3339,54 @@ axios.get(process.env.VUE_APP_SERVER + "/ebook/list")
 
 
 
+### 4.4 修改axios的baseUrl读配置文件
+
+以后写接口每次都要写`process.env.VUE_APP_SERVER`非常的麻烦，`axios`提供了全局的配置，一般我们想到有一些配置的代码的话，我们就要想到写在`main.ts`里面。
+
+我们打开`main.ts`， 在上面引入`axios`：
+
+```typescript
+import axios from 'axios';
+
+```
+
+引入之后添加以下代码：
+
+```typescript
+axios.defaults.baseURL = process.env.VUE_APP_SERVER;
+
+```
+
+这段代码的意思就是去修改它的`baseURL`，这里的`baseURL`和我们`vue`中的`baseURL`不一样，一个是`vue`框架的，一个是`axios`自己的。
+
+添加完成后请求地址里的`process.env.VUE_APP_SERVER`就不需要了。
+
+![image-20220617152652097](wiki知识库.assets/image-20220617152652097.png)
+
+启动项目可以发现：
+
+![image-20220617152923640](wiki知识库.assets/image-20220617152923640.png)
+
+
+
+这里的baseURL就是我们刚才配置的环境变量。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
