@@ -3373,11 +3373,30 @@ axios.defaults.baseURL = process.env.VUE_APP_SERVER;
 
 
 
+## 5. 使用axios拦截器打印前端日志
 
+在很多时候我们需要对前端进行调试，前端最简单的调试方法就是用打日志的方式。以后我们会写很多的接口，前后端的接口之间的交互需要经常进行调试，有一种方法，就是每次发送（调用后端接口）之前打印日志，发送的结果的回调函数里面，我们在打印一个日志。但是用这种方式需要每次我们都自己去写代码。`axios`提供了拦截器的功能，我们可以在拦截器里面，把请求日志和返回参数一起打印出来。这种统一的代码配置，我们写在`main.ts`里面。
 
+```
+/**
+ * axios拦截器
+ */
+axios.interceptors.request.use(function (config) {
+  console.log('请求参数：', config);
+  return config;
+}, error => {
+  return Promise.reject(error);
+});
+axios.interceptors.response.use(function (response) {
+  console.log('返回结果：', response);
+  return response;
+}, error => {
+  console.log('返回错误：', error);
+  return Promise.reject(error);
+});
+```
 
-
-
+  第一段是拦截请求，第二段是拦截返回。
 
 
 
