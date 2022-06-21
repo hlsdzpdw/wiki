@@ -3453,11 +3453,86 @@ public class LogFilter implements Filter {
 
 
 
+## 7. SpringBoot拦截器的使用
+
+### 7.1 配置拦截器，打印接口耗时
+
+在后端代码中新建一个`interceptor`包，创建`LogInterceptor.java`：
+
+```java
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * 拦截器：Spring框架特有的，常用于登录校验，权限校验，请求日志打印 /login
+ */
+@Component
+public class LogInterceptor implements HandlerInterceptor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LogInterceptor.class);
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        // 打印请求信息
+        LOG.info("------------- LogInterceptor 开始 -------------");
+        LOG.info("请求地址: {} {}", request.getRequestURL().toString(), request.getMethod());
+        LOG.info("远程地址: {}", request.getRemoteAddr());
+
+        long startTime = System.currentTimeMillis();
+        request.setAttribute("requestStartTime", startTime);
+        return true;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        long startTime = (Long) request.getAttribute("requestStartTime");
+        LOG.info("------------- LogInterceptor 结束 耗时：{} ms -------------", System.currentTimeMillis() - startTime);
+    }
+}
 
 
+```
 
+拦截器跟过滤器有一点区别，就是它前跟后是分成两个方法的。过滤器的话是整个一起，中间用链去调用业务方法。
 
+我们还需要增加一个全局的配置`SpringMvcConfig.java`，这个配置写在`config`包下。
 
+`SpringMvcConfig.java`：
 
+```java
+package cn.ll.config;
 
+import cn.ll.interceptor.LogInterceptor;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.annotation.Resource;
+
+@Configuration
+public class SpringMvcConfig implements WebMvcConfigurer {
+
+    @Resource
+    LogInterceptor logInterceptor;
+
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(logInterceptor)
+                .addPathPatterns("/**").excludePathPatterns("/login");
+    }
+}
+```
+
+我们在这个配置中增加一个拦截器，把拦截器注入进来，然后有一个`add`增加拦截器的方法，这个方法是`WebMvcConfigurer`这个接口里面的。注册`logInterceptor`这样一个拦截器，然后针对所有的请求。但是并不是所有的接口都需要这个拦截器，比如我们的登录，所以我们需要通过`.excludePathPatterns`排除请求排除掉login。
+
+启动我们的后端项目：
+
+![image-20220621144737229](wiki知识库.assets/image-20220621144737229.png)
+
+我们可以看到它的执行顺序，先去执行过滤器，然后把过滤器里面的内容全部执行了，然后再去执行拦截器。拦截器里面先去执行第一个方法，然后再去执行业务方法，业务方法结束了，拦截器结束了打印耗时，然后过滤器结束了打印耗时。可以看到过滤器的范围更大，因为他是在容器里面，就是`tomcat`里面。所以接口一进来先会到容器，然后容器会发到应用。我们的`SpringBoot`它就是一个应用，一个`web`应用。在进入`web`应用我们的拦截器就拿到了，拿到后就去处理，然后再去执行我们`web`应用里的业务逻辑。
 
