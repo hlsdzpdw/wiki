@@ -3536,3 +3536,117 @@ public class SpringMvcConfig implements WebMvcConfigurer {
 
 我们可以看到它的执行顺序，先去执行过滤器，然后把过滤器里面的内容全部执行了，然后再去执行拦截器。拦截器里面先去执行第一个方法，然后再去执行业务方法，业务方法结束了，拦截器结束了打印耗时，然后过滤器结束了打印耗时。可以看到过滤器的范围更大，因为他是在容器里面，就是`tomcat`里面。所以接口一进来先会到容器，然后容器会发到应用。我们的`SpringBoot`它就是一个应用，一个`web`应用。在进入`web`应用我们的拦截器就拿到了，拿到后就去处理，然后再去执行我们`web`应用里的业务逻辑。
 
+## 8. SpringBootAOP的使用
+
+### 8.1 配置AOP，打印接口耗时、请求参数、返回参数
+
+一般我们会把`AOP`放到一个单独的层，所以我们新建一个`aspect`包，在这个包下新建一个`LogAspect.java`。`AOP`、过滤器、拦截器三个代码格式都是差不多的，都是比较固定的。以后要用到直接拷贝代码即可。
+
+`LogAspect.java`：
+
+```java
+package cn.ll.aspect;
+
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.support.spring.PropertyPreFilters;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
+import org.aspectj.lang.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+
+@Aspect
+@Component
+public class LogAspect {
+
+    private final static Logger LOG = LoggerFactory.getLogger(LogAspect.class);
+
+    /** 定义一个切点 */
+    @Pointcut("execution(public * cn.ll.controller..*Controller.*(..))")
+    public void controllerPointcut() {}
+
+    @Before("controllerPointcut()")
+    public void doBefore(JoinPoint joinPoint) throws Throwable {
+
+        // 开始打印请求日志
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        Signature signature = joinPoint.getSignature();
+        String name = signature.getName();
+
+        // 打印请求信息
+        LOG.info("------------- 开始 -------------");
+        LOG.info("请求地址: {} {}", request.getRequestURL().toString(), request.getMethod());
+        LOG.info("类名方法: {}.{}", signature.getDeclaringTypeName(), name);
+        LOG.info("远程地址: {}", request.getRemoteAddr());
+
+        // 打印请求参数
+        Object[] args = joinPoint.getArgs();
+        // LOG.info("请求参数: {}", JSONObject.toJSONString(args));
+
+        Object[] arguments  = new Object[args.length];
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] instanceof ServletRequest
+                    || args[i] instanceof ServletResponse
+                    || args[i] instanceof MultipartFile) {
+                continue;
+            }
+            arguments[i] = args[i];
+        }
+        // 排除字段，敏感字段或太长的字段不显示
+        String[] excludeProperties = {"password", "file"};
+        PropertyPreFilters filters = new PropertyPreFilters();
+        PropertyPreFilters.MySimplePropertyPreFilter excludefilter = filters.addFilter();
+        excludefilter.addExcludes(excludeProperties);
+        LOG.info("请求参数: {}", JSONObject.toJSONString(arguments, excludefilter));
+    }
+
+    @Around("controllerPointcut()")
+    public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        long startTime = System.currentTimeMillis();
+        Object result = proceedingJoinPoint.proceed();
+        // 排除字段，敏感字段或太长的字段不显示
+        String[] excludeProperties = {"password", "file"};
+        PropertyPreFilters filters = new PropertyPreFilters();
+        PropertyPreFilters.MySimplePropertyPreFilter excludefilter = filters.addFilter();
+        excludefilter.addExcludes(excludeProperties);
+        LOG.info("返回结果: {}", JSONObject.toJSONString(result, excludefilter));
+        LOG.info("------------- 结束 耗时：{} ms -------------", System.currentTimeMillis() - startTime);
+        return result;
+    }
+
+}
+
+```
+
+使用`AOP`的话需要在`pom.xml`里添加新的依赖：
+
+```
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.70</version>
+        </dependency>
+```
+
+我们这里添加了两个依赖，一个是`aop`的依赖，这个`aop`是`Springboot`自带的内置的，所以我们不需要加版本号。另一个是`fastjson`依赖，这个不是必须的，就是使用`aop`和`json`没什么关系。因为在`aop`里做的一些处理，使用到了`JSONObject`，所以需要引入`fastjson`。
+
+引入依赖后，我们启动后端项目，运行测试脚本：![image-20220621201536463](wiki知识库.assets/image-20220621201536463.png)
+
+我们可以看到运行的顺序是过滤器，拦截器，最后才是进入`aop`。
+
+过滤器、拦截器和`aop`我们三个选一个就行，这里我们选择`aop`，我们需要把过滤器和拦截器所有的代码注释掉。
